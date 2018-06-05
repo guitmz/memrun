@@ -5,7 +5,6 @@ import (
 	"io/ioutil"
 	"os"
 	"syscall"
-	"time"
 	"unsafe"
 )
 
@@ -33,5 +32,5 @@ func main() {
 		os.Exit(1)
 	}
 
-	runFromMemoryAsDaemon(os.Args[1], os.Args[2])
+	runFromMemory(os.Args[1], os.Args[2])
 }
