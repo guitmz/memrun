@@ -13,7 +13,6 @@ import (
 const (
 	mfdCloexec  = 0x0001
 	memfdCreate = 319
-	fork        = 57
 )
 
 func runFromMemory(displayName string, filePath string) {
