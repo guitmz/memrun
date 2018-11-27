@@ -57,18 +57,18 @@ strlen:						; rdi is the default search for scasb
     ret
 
 print:
-	push    rsi
-	push    rdx
-	push    rdi
+    push    rsi
+    push    rdx
+    push    rdi
     call    strlen
     mov     rdx, rax
     mov     rsi, rdi
     mov     rdi, 1
     mov     rax, SYS_WRITE
     syscall
-	pop     rsi
-	pop     rdx
-	pop     rdi
+    pop     rsi
+    pop     rdx
+    pop     rdi
     ret
 
 strToVar:
