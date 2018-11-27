@@ -30,8 +30,8 @@ ends
 
 normal_exit:
     xor     rdi, rdi		; exit code 0
-	mov     rax, SYS_EXIT   ; sys_exit 
-	syscall
+    mov     rax, SYS_EXIT   ; sys_exit 
+    syscall
 
 bad_exit:
     mov     rdi, 1
@@ -56,35 +56,19 @@ strlen:						; rdi is the default search for scasb
     pop rdi
     ret
 
-
-strlen_old:
-	push    rdi				; push to stack
-	push    rcx				; push to stack
-	xor	    rcx, rcx		; set rcx to 0
-	mov 	rcx, -1  		; move -1 to rcx
-	xor  	al, al 			; set al to 0
-	cld						; clear the direction flags
-	repne 	scasb 			; repeat if not equal to al
-	neg 	rcx				; negate rcx
-	sub 	rcx, 1			; subtract 1 from rcx
-	mov 	rax, rcx		; move value from rcx to rax
-	pop		rcx				; restore original rcx value
-	pop		rdi				; restore original rdi value
-	ret
-
 print:
-	push rsi
-	push rdx
-	push rdi
-    call      strlen
-    mov       rdx, rax
-    mov       rsi, rdi
-    mov       rdi, 1
-    mov       rax, SYS_WRITE
+	push    rsi
+	push    rdx
+	push    rdi
+    call    strlen
+    mov     rdx, rax
+    mov     rsi, rdi
+    mov     rdi, 1
+    mov     rax, SYS_WRITE
     syscall
-	pop rsi
-	pop rdx
-	pop rdi
+	pop     rsi
+	pop     rdx
+	pop     rdi
     ret
 
 strToVar:
