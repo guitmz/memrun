@@ -49,7 +49,7 @@ start:
 ; reading source file to buffer
 ;-----------------------------------------------------------------------------
   lea   rsi, [buffer]
-  mov   rdx, fstat.st_size        ; THIS DOESNT WORK
+  mov   rdx, fstat.st_size        ; loading file size to rdx
   mov   rdi, rbx                  ; load rdi with fd from rbx (3)
   mov   rax, SYS_READ             ; read file to buffer
   syscall
