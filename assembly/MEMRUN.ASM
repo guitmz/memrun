@@ -1,8 +1,8 @@
 format ELF64 executable 3
 
-include "struct.inc"
-include "syscalls.inc"
-include "utils.inc"
+include "STRUCT.INC"
+include "SYSCALLS.INC""
+include "UTILS.INC"
 
 segment readable executable
 entry start
