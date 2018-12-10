@@ -39,9 +39,9 @@ struct STAT
 ends
 
 normal_exit:
-    xor     rdi, rdi		; exit code 0
-	mov     rax, SYS_EXIT   ; sys_exit 
-	syscall
+    xor     rdi, rdi			; exit code 0
+    mov     rax, SYS_EXIT		; sys_exit 
+    syscall
 
 bad_exit:
     mov     rdi, 1
