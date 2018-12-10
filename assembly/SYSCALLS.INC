@@ -1,9 +1,0 @@
-SYS_EXIT            = 60
-SYS_OPEN            = 2
-SYS_CLOSE           = 3
-SYS_WRITE           = 1
-SYS_READ            = 0
-SYS_STAT            = 4
-SYS_MEMFD_CREATE    = 319
-SYS_EXECVE          = 59
-SYS_FSTAT           = 5
