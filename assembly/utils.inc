@@ -103,4 +103,3 @@ strToVar:
     cmp		byte [rsi], 0   ; Check for null terminator
     jne		strToVar        ; loop if not null
     ret
-
