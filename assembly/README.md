@@ -3,7 +3,7 @@ Small tool written in Assembly (FASM) to run ELF (x86_64) binaries from memory w
 
 # Usage
 
-Build it with `$ fasm MEMRUN.ASM` and execute it. The first argument is the path for the ELF binary you want to run from memory and the second argument is the process name (string) you want to see in `ps auxww` output for example.
+Build it with `$ fasm memrun.asm` and execute it. The first argument is the path for the ELF binary you want to run from memory and the second argument is the process name (string) you want to see in `ps auxww` output for example.
 
 ```
 Usage: memrun <path_to_elf_file> <process_name>
