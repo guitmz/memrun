@@ -39,7 +39,7 @@ struct STAT
 ends
 
 normal_exit:
-    xor		rdi, rdi					; exit code 0
+    xor		rdi, rdi                ; exit code 0
     mov		rax, SYS_EXIT			; sys_exit 
     syscall
 
@@ -53,46 +53,46 @@ usage:
     call	print
     jmp		bad_exit
 
-strlen:											; rdi is the default search for scasb
-		push    rdi
-		push    rcx
-		mov     rcx, -1
-		xor     eax, eax
-		repne   scasb 
-		not     rcx
+strlen:                             ; rdi is the default search for scasb
+    push    rdi
+    push    rcx
+    mov     rcx, -1
+    xor     eax, eax
+    repne   scasb 
+    not     rcx
     mov     rax, rcx 
     pop     rcx
     pop     rdi
     ret
 
 strlen_old:
-		push	rdi								; push to stack
-		push	rcx								; push to stack
-		xor		rcx, rcx					; set rcx to 0
-		mov 	rcx, -1						; move -1 to rcx
-		xor  	al, al						; set al to 0
-		cld											; clear the direction flags
-		repne scasb							; repeat if not equal to al
-		neg 	rcx								; negate rcx
-		sub 	rcx, 1						; subtract 1 from rcx
-		mov 	rax, rcx					; move value from rcx to rax
-		pop		rcx								; restore original rcx value
-		pop		rdi								; restore original rdi value
-		ret
+    push	rdi                     ; push to stack
+    push	rcx                     ; push to stack
+    xor		rcx, rcx                ; set rcx to 0
+    mov 	rcx, -1                 ; move -1 to rcx
+    xor  	al, al                  ; set al to 0
+    cld                             ; clear the direction flags
+    repne scasb                     ; repeat if not equal to al
+    neg 	rcx                     ; negate rcx
+    sub 	rcx, 1                  ; subtract 1 from rcx
+    mov 	rax, rcx                ; move value from rcx to rax
+    pop		rcx                     ; restore original rcx value
+    pop		rdi                     ; restore original rdi value
+    ret
 
 print:
-		push	rsi
-		push	rdx
-		push	rdi
+    push	rsi
+    push	rdx
+    push	rdi
     call	strlen
     mov		rdx, rax
     mov		rsi, rdi
     mov		rdi, 1
     mov		rax, SYS_WRITE
     syscall
-		pop		rsi
-		pop		rdx
-		pop		rdi
+    pop		rsi
+    pop		rdx
+    pop		rdi
     ret
 
 strToVar:
@@ -103,3 +103,4 @@ strToVar:
     cmp		byte [rsi], 0   ; Check for null terminator
     jne		strToVar        ; loop if not null
     ret
+
