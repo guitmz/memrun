@@ -44,8 +44,8 @@ normal_exit:
     syscall
 
 bad_exit:
-    mov		rdi, 1
-    mov		rax, SYS_EXIT
+    mov     rdi, 1
+    mov     rax, SYS_EXIT
     syscall
 
 usage:
