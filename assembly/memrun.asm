@@ -48,16 +48,16 @@ start:
 ;-----------------------------------------------------------------------------
 ; creating memory map for source file
 ;-----------------------------------------------------------------------------
-  pop   rax                        ; restore rax containing source fd
-  mov   r8, rax                    ; load r8 with source fd from rax
-  mov   rax, SYS_MMAP              ; mmap number
-  mov   rdi, 0                     ; operating system will choose mapping destination
-  mov   rsi, r12                   ; load rsi with page size from fstat.st_size in r12
-  mov   rdx, 0x1                   ; new memory region will be marked read only
-  mov   r10, 0x2                   ; pages will not be shared
-  mov   r9, 0                      ; offset inside test.txt
-  syscall                          ; now rax will point to mapped location
-  push  rax                        ; saving rax with mmap address
+  pop   rax                       ; restore rax containing source fd
+  mov   r8, rax                   ; load r8 with source fd from rax
+  mov   rax, SYS_MMAP             ; mmap number
+  mov   rdi, 0                    ; operating system will choose mapping destination
+  mov   rsi, r12                  ; load rsi with page size from fstat.st_size in r12
+  mov   rdx, 0x1                  ; new memory region will be marked read only
+  mov   r10, 0x2                  ; pages will not be shared
+  mov   r9, 0                     ; offset inside test.txt
+  syscall                         ; now rax will point to mapped location
+  push  rax                       ; saving rax with mmap address
 ;-----------------------------------------------------------------------------
 ; close source file
 ;-----------------------------------------------------------------------------
@@ -69,8 +69,8 @@ start:
 ;-----------------------------------------------------------------------------
   lea   rdi, [bogusName]          ; empty string
   mov   rsi, MFD_CLOEXEC          ; memfd mode
-  mov   rax, SYS_MEMFD_CREATE 
-  syscall	                        ; memfd_create
+  mov   rax, SYS_MEMFD_CREATE
+  syscall                         ; memfd_create
   mov   rbx, rax                  ; memfd fd from rax to rbx
 ;-----------------------------------------------------------------------------
 ; writing memory map (source file) content to memory fd
@@ -97,7 +97,7 @@ start:
 ; initialized data
 ;-----------------------------------------------------------------------------
 segment readable writable
-fstat             STAT 
+fstat             STAT
 usageMsg          db "Usage: memrun <path_to_elf_file> <process_name>", 0xA, 0
 sourcePath        db 256 dup 0
 targetProcessName db 256 dup 0
