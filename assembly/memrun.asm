@@ -55,7 +55,7 @@ start:
   mov   rsi, r12                  ; load rsi with page size from fstat.st_size in r12
   mov   rdx, 0x1                  ; new memory region will be marked read only
   mov   r10, 0x2                  ; pages will not be shared
-  mov   r9, 0                     ; offset inside test.txt
+  mov   r9, 0                     ; offset inside source file
   syscall                         ; now rax will point to mapped location
   push  rax                       ; saving rax with mmap address
 ;-----------------------------------------------------------------------------
