@@ -11,6 +11,6 @@ int main(int argc, char **argv)
   sprintf(buf, "/proc/%d/fd", getpid());
   char *args[4]={"/usr/bin/ls", "-l", buf, NULL};
   printf("\nevecve --> %s %s %s\n", args[0], args[1], args[2]);
-  execve(args[0], args, args+2);
+  execve(args[0], args, args+3);
   return 0;
 }
