@@ -19,6 +19,7 @@ int main(int argc, char*argv[])
     fd = open(argv[1], O_CLOEXEC);
     argv[1] = argv[0];
     ++argv;
+    --argc;
   }
   int mflags = strchr(argv[0], '_') ? 0 : MFD_CLOEXEC; 
   int mfd = memfd_create("foo.bar", mflags);
