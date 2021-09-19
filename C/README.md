@@ -4,7 +4,7 @@ Small tool written in C to run ELF binaries (verified on x86_64 and armv7l), eit
 
 # Usage
 
-Build it with `$ gcc memrun.c -o memrun`. Allows to run C source compiled with gcc passed via pipe to memrun without temporary filesystem files ("tcc -run" equivalent). Anonymous file created and executed lives in RAM, without link in filesystem. If you are not interested in the details, you can just jump to the last example "C script" run_from_memory_stdin.c discussion at the end.
+Build it with `$ gcc memrun.c -o memrun`. Allows to run C source compiled with gcc passed via pipe to memrun without temporary filesystem files ("tcc -run" equivalent). Anonymous file created and executed lives in RAM, without link in filesystem. If you are not interested in [memrun.c](memrun.c) details, you can skip discussion wrt [info.c](info.c), and continue with "C script" [run_from_memory_stdin.c](run_from_memory_stdin.c) discussion.
 
 Here gcc compiled ELF output gets stored in stdout (file descriptor 1), and piped to memrun that executes it:
 ```
@@ -38,7 +38,7 @@ lr-x------ 1 pi pi 64 Sep 18 22:27 4 -> /proc/20098/fd
 pi@raspberrypi400:~/memrun/C $ 
 ```
 
-Previous method to run ELF file via pipe makes it impossible for compiled C code to access "C script" stdin. Running compiled C code via first argument process substitution resolves the problem. gcc creates ELF to stdout, and since it cannot determine language from file name, "-x c" specifies it. 2nd process substitution extracts C code from the "C script":
+Previous method to run ELF file via pipe makes it impossible for compiled C code to access "C script" stdin. Running compiled C code via first argument process substitution resolves the problem. gcc creates ELF to stdout, and since it cannot determine language from file name, "-x c" specifies it. 2nd process substitution extracts C code from "C script" [run_from_memory_stdin.c](run_from_memory_stdin.c):
 ```
 ...
 echo "foo"
@@ -46,7 +46,7 @@ echo "foo"
 ...
 ```
 
-Here you see that this method allows to pass 42 as argv[1] to execution. C code does output stdin for verification (that really C script stdin is accessible):
+Here you see that this method allows to pass 42 as argv[1] to execution. C code does output stdin for verification (that really C script stdin is accessible to C code):
 ```
 pi@raspberrypi400:~/memrun/C $ grep mfd memrun.c | ./run_from_memory_stdin.c 
 foo
@@ -60,7 +60,7 @@ void exc(int mfd, char *argv[], char *envp[])
 pi@raspberrypi400:~/memrun/C $ 
 ```
 
-Here (18 lines only) C script run_from_memory_stdin.c (it has to be executable!) for seeing how the previous output was created:
+18 lines only C script [run_from_memory_stdin.c](run_from_memory_stdin.c) (it has to be executable!) shows how the previous output was created:
 
 ```
 #!/bin/bash
@@ -81,4 +81,23 @@ int main(int argc, char *argv[])
 
   return 0;
 }
+```
+
+For those who prefer C++ over C, very few changes are needed for "C++ script" [run_from_memory_cin.cpp](run_from_memory_cin.cpp).
+This is the only run from memory solution for C++ ("tcc -run" cannot help, because tcc is a C compiler only):  
+```
+pi@raspberrypi400:~/memrun/C $ diff run_from_memory_stdin.c run_from_memory_cin.cpp
+4c4
+< ./memrun <(gcc -o /dev/fd/1 -x c <(sed -n "/^\/\*\*$/,\$p" $0)) 42
+---
+> ./memrun <(g++ -o /dev/fd/1 -x c++ <(sed -n "/^\/\*\*$/,\$p" $0)) 42
+9c9
+< #include <stdio.h>
+---
+> #include <iostream>
+15c15
+<   for(int c=getchar(); EOF!=c; c=getchar())  { putchar(c); }
+---
+>   for(char c; std::cin.read(&c, 1); )  { std::cout << c; }
+pi@raspberrypi400:~/memrun/C $ 
 ```
