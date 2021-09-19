@@ -215,7 +215,7 @@ lr-x------ 1 pi pi 64 Sep 20 00:48 63 -> 'pipe:[3394399]'
 pi@raspberrypi400:~/memrun/C $
 ```
 
-... as well as g++ behave like tcc with "-run" (compile to and execute from RAM):
+... as well as g++ behave like tcc with "-run" (compile to and execute from RAM, no storing of executable in filesystem):
 ```
 pi@raspberrypi400:~/memrun/C $ uname -a | g++ -O3 -Wall -run demo.cpp 42
 bar 42
