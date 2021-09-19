@@ -88,7 +88,7 @@ int main(int argc, char *argv[])
 ## C++ script
 
 For those who prefer C++ over C, very few changes are needed for "C++ script" [run_from_memory_cin.cpp](run_from_memory_cin.cpp).
-This is the only run from memory solution for C++ ("tcc -run" cannot help, because tcc is a C compiler only):  
+This is the only "run from memory" solution for C++ ("tcc -run" cannot help, because tcc is a C compiler only):  
 ```
 pi@raspberrypi400:~/memrun/C $ diff run_from_memory_stdin.c run_from_memory_cin.cpp
 4c4
