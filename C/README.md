@@ -105,3 +105,46 @@ pi@raspberrypi400:~/memrun/C $ diff run_from_memory_stdin.c run_from_memory_cin.
 >   for(char c; std::cin.read(&c, 1); )  { std::cout << c; }
 pi@raspberrypi400:~/memrun/C $ 
 ```
+
+## C/C++ interaction with bash in script
+
+The C/C++ scripts seen sofar only showed how bash and C/C++ in single file can work.
+2 years ago I created [4DoF robot arm](https://github.com/Hermann-SW/4DoF_robot_arm) repo.
+That repo's "gamepad" tool is a C script, with executable created under "/tmp".
+Its C code (Jason White's joystick.c from another repo) did low level gamepad event processing.
+The bash code used the processed events to control 4 servo motors with pigpio library pigs commands.
+Interaction was done, in that the stdout output of C code was input for the bash script.
+
+I copied that tool over as [gamepad.c](gamepad.c) C script, and modified it to "run from memory", with minimal diff:  
+```
+pi@raspberrypi400:~/memrun/C $ diff ~/4DoF_robot_arm/tools/gamepad gamepad.c 
+7,9d6
+< js=/tmp/joystick
+< if [ ! -f $js ]; then sed -n "/^\/\*\*$/,\$p" $0 | gcc -x c - -o $js; fi
+< 
+87c84
+< done < <($js)
+---
+> done < <(./memrun <(gcc -o /dev/fd/1 -x c <(sed -n "/^\/\*\*$/,\$p" $0)))
+pi@raspberrypi400:~/memrun/C $ 
+```
+
+This is how bash and C code parts work together:
+```
+...
+while IFS= read -r line; do
+    case $line in
+        ...
+    esac
+    ...
+    echo $g $u $l $p $d $calib
+
+    pigs s 8 $g; pigs s 9 $u; pigs s 10 $l; pigs s 11 $p
+
+done < <(./memrun <(gcc -o /dev/fd/1 -x c <(sed -n "/^\/\*\*$/,\$p" $0)))
+
+exit
+/**
+ * Author: Jason White
+...  
+```
