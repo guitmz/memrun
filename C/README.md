@@ -156,8 +156,8 @@ The symbolic links bin/gcc and bin/g++ to [bin/grun](bin/grun)
 add tcc's "-run" option to gcc and g++. grun tests
 whether "-run" option is present. If not normal gcc 
 and g++ will be invoked as always. Otherwise gcc/g++
-is used to compile into RAM, and memrun executes from there ([memrun.c](memrun.c) gets compiled automatically if needed),
-with same syntax as tcc. The syntax is the same as tcc's syntax:
+is used to compile into RAM, and memrun executes from there ([memrun.c](memrun.c) gets compiled automatically if needed).
+The syntax is the same as tcc's syntax:
 ```
 pi@raspberrypi400:~/memrun/C $ tcc | grep "\-run"
        tcc [options...] -run infile [arguments...]
