@@ -1,0 +1,26 @@
+#!/usr/bin/bash
+
+# if needed, compile memrun.c
+mr=$(dirname "$0")/../memrun
+if [[ $mr.c -nt $mr ]]; then /usr/bin/gcc "$mr.c" -o "$mr"; fi
+
+# check for "-run" arg
+args=($*)
+for((i=0; i<$#-1; ++i))
+do
+  if [[ ${args[$i]} == "-run" ]]; then break; fi
+done
+
+# in case no "-run" arg found, compile with real compiler
+cmp=$(basename "$0")
+if [[ $i -ge $#-1 ]]; then "/usr/bin/$cmp" "$@"; exit; fi
+
+# determine language, options for real compiler and src language
+if [[ "$cmp" == "gcc" ]]; then lng=c; else lng=c++; fi
+opts=${args[@]:0:$i}
+shift $((i+1))
+src=$1
+shift
+
+# compile $src to RAM, and then execute from there, with args
+$mr <("/usr/bin/$cmp" $opts -o /dev/fd/1 -x $lng "$src") "$@"

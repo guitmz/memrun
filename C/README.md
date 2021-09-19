@@ -148,3 +148,77 @@ exit
  * Author: Jason White
 ...  
 ```
+
+
+## Adding (tcc) "-run" option to gcc and g++
+
+The symbolic links bin/gcc and bin/g++ to [bin/grun](bin/grun)
+add tcc's "-run" option to gcc and g++. grun tests
+whether "-run" option is present. If not normal gcc 
+and g++ will be invoked as always. Otherwise gcc/g++
+is used to compile into RAM, and memrun executes from there ([memrun.c](memrun.c) gets compiled automatically if needed),
+with same syntax as tcc. The syntax is the same as tcc's syntax:
+```
+pi@raspberrypi400:~/memrun/C $ tcc | grep "\-run"
+       tcc [options...] -run infile [arguments...]
+  -run        run compiled source
+pi@raspberrypi400:~/memrun/C $ 
+```
+
+First bin/gcc and bin/g++ need to be used instead of normal gcc and g++ (by preprending bin to $PATH):
+```
+pi@raspberrypi400:~/memrun/C $ which gcc
+/usr/bin/gcc
+pi@raspberrypi400:~/memrun/C $ export PATH=~/memrun/C/bin:$PATH
+pi@raspberrypi400:~/memrun/C $ which gcc
+/home/pi/memrun/C/bin/gcc
+pi@raspberrypi400:~/memrun/C $ which g++
+/home/pi/memrun/C/bin/g++
+pi@raspberrypi400:~/memrun/C $ 
+```
+
+In case no "-run" is found, normal gcc is used ...
+```
+pi@raspberrypi400:~/memrun/C $ ls a.out 
+ls: cannot access 'a.out': No such file or directory
+pi@raspberrypi400:~/memrun/C $ gcc info.c 
+pi@raspberrypi400:~/memrun/C $ ls a.out 
+a.out
+pi@raspberrypi400:~/memrun/C $
+```
+
+... as well as normal g++:
+```
+pi@raspberrypi400:~/memrun/C $ rm a.out 
+pi@raspberrypi400:~/memrun/C $ sed -n "/^\/\*\*$/,\$p" run_from_memory_cin.cpp > demo.cpp
+pi@raspberrypi400:~/memrun/C $ g++ demo.cpp 
+pi@raspberrypi400:~/memrun/C $ ls a.out 
+a.out
+pi@raspberrypi400:~/memrun/C $ 
+```
+
+
+In case "-run" is present, gcc ...
+```
+pi@raspberrypi400:~/memrun/C $ uname -a | gcc -O3 -run info.c test
+My process ID : 24787
+argv[0] : /home/pi/memrun/C/bin/../memrun
+argv[1] : test
+
+evecve --> /usr/bin/ls -l /proc/24787/fd
+total 0
+lr-x------ 1 pi pi 64 Sep 20 00:48 0 -> 'pipe:[3396870]'
+lrwx------ 1 pi pi 64 Sep 20 00:48 1 -> /dev/pts/0
+lrwx------ 1 pi pi 64 Sep 20 00:48 2 -> /dev/pts/0
+lr-x------ 1 pi pi 64 Sep 20 00:48 3 -> /proc/24787/fd
+lr-x------ 1 pi pi 64 Sep 20 00:48 63 -> 'pipe:[3394399]'
+pi@raspberrypi400:~/memrun/C $
+```
+
+... as well as g++ behave like tcc with "-run" (compile to and execute from RAM):
+```
+pi@raspberrypi400:~/memrun/C $ uname -a | g++ -O3 -Wall -run demo.cpp 42
+bar 42
+Linux raspberrypi400 5.10.60-v7l+ #1449 SMP Wed Aug 25 15:00:44 BST 2021 armv7l GNU/Linux
+pi@raspberrypi400:~/memrun/C $ 
+```
