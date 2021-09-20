@@ -222,3 +222,39 @@ bar 42
 Linux raspberrypi400 5.10.60-v7l+ #1449 SMP Wed Aug 25 15:00:44 BST 2021 armv7l GNU/Linux
 pi@raspberrypi400:~/memrun/C $ 
 ```
+
+## Shebang processing
+
+Like tcc, "-run" enabled gcc and g++ can be invoked from scripts (by [shebang](https://en.wikipedia.org/wiki/Shebang_(Unix)) character sequence).
+
+gcc example:
+```
+pi@raspberrypi400:~/memrun/C $ ./HelloWorld.c
+Hello, World!
+pi@raspberrypi400:~/memrun/C $ cat HelloWorld.c
+#!/home/pi/memrun/C/bin/gcc -run
+#include <stdio.h>
+
+int main(void)
+{
+  printf("Hello, World!\n");
+  return 0;
+}
+pi@raspberrypi400:~/memrun/C $ 
+```
+
+g++ example:
+```
+pi@raspberrypi400:~/memrun/C $ ./HelloWorld.cpp 
+Hello, World!
+pi@raspberrypi400:~/memrun/C $ cat HelloWorld.cpp 
+#!/home/pi/memrun/C/bin/g++ -run
+#include <iostream>
+
+int main(void)
+{
+  std::cout << "Hello, World!" << std::endl;
+  return 0;
+}
+pi@raspberrypi400:~/memrun/C $ 
+```

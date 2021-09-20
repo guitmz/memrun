@@ -6,14 +6,14 @@ if [[ $mr.c -nt $mr ]]; then /usr/bin/gcc "$mr.c" -o "$mr"; fi
 
 # check for "-run" arg
 args=($*)
-for((i=0; i<$#-1; ++i))
+for((i=0; i<$#; ++i))
 do
   if [[ ${args[$i]} == "-run" ]]; then break; fi
 done
 
 # in case no "-run" arg found, compile with real compiler
 cmp=$(basename "$0")
-if [[ $i -ge $#-1 ]]; then "/usr/bin/$cmp" "$@"; exit; fi
+if [[ $i -ge $# ]]; then "/usr/bin/$cmp" "$@"; exit; fi
 
 # determine language, options for real compiler and src language
 if [[ "$cmp" == "gcc" ]]; then lng=c; else lng=c++; fi
@@ -22,5 +22,18 @@ shift $((i+1))
 src=$1
 shift
 
+# for execution as command processor
+function shebang() {
+  IFS=''
+
+  read -r line
+  if [[ ${line:0:2} != "#!" ]]; then echo "$line"; fi
+
+  while read -r line
+  do
+    echo "$line" 
+  done
+}
+
 # compile $src to RAM, and then execute from there, with args
-$mr <("/usr/bin/$cmp" $opts -o /dev/fd/1 -x $lng "$src") "$@"
+$mr <("/usr/bin/$cmp" $opts -o /dev/fd/1 -x $lng <(shebang < "$src")) "$@"
