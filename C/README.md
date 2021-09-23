@@ -259,7 +259,7 @@ int main(void)
 pi@raspberrypi400:~/memrun/C $ 
 ```
 
-## mmemfd_create for bash
+## memfd_create for bash
 
 While memrun.c is fine, it does three things:
 1. create memory file
