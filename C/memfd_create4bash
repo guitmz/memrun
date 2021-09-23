@@ -1,0 +1,23 @@
+#!/usr/bin/bash
+#
+# demo use of memory file (that lives in RAM), created with memfd_create.c
+
+# read memory file name
+read -r mf < <(./memfd_create &)
+
+# show name
+echo "$mf"
+
+# fill memory file
+echo foo > "$mf"
+echo bar >> "$mf"
+
+# output memory file
+cat "$mf"
+
+# terminate memfd_create.c by its pid, in order to close memory file
+IFS="/"  read -ra mfa <<< "$mf"
+kill "${mfa[2]}"
+
+# memory file does not exist anymore after memfd_create.c ended
+IFS=""  cat "$mf"

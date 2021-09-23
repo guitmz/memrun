@@ -258,3 +258,67 @@ int main(void)
 }
 pi@raspberrypi400:~/memrun/C $ 
 ```
+
+## mmemfd_create for bash
+
+While memrun.c is fine, it does three things:
+1. create memory file
+2. copy compiled executable to memory file
+3. execute memory file
+
+2 and 3 can be done in bash or on command line. New [memfd_create.c](memfd_create.c) just exposes memfd_create system call for use with bash. After creating memory file, it creates the proc name for accessing the memory file and prints it to the calling process. That way bash script gets name for using the memory file. Memory file lives as long as memfd_create is running (it sleeps while waiting to be terminated). Bash script needs to extract pid from file name and just kill that pid, then memory file will not be accessible anymore.
+
+Example script memfd_create4bash demonstrates all that:
+```
+#!/usr/bin/bash
+#
+# demo use of memory file (that lives in RAM), created with memfd_create.c
+
+# read memory file name
+read -r mf < <(./memfd_create &)
+
+# show name
+echo "$mf"
+
+# fill memory file
+echo foo > "$mf"
+echo bar >> "$mf"
+
+# output memory file
+cat "$mf"
+
+# terminate memfd_create.c by its pid, in order to close memory file
+IFS="/"  read -ra mfa <<< "$mf"
+kill "${mfa[2]}"
+
+# memory file does not exist anymore after memfd_create.c ended
+IFS=""  cat "$mf"
+```
+
+This is demo output:
+```
+pi@raspberrypi400:~/memrun/C $ ./memfd_create4bash 
+/proc/1808/fd/3
+foo
+bar
+cat: /proc/1808/fd/3: No such file or directory
+pi@raspberrypi400:~/memrun/C $ 
+```
+
+[bin/grun](bin/grun) is used by "-run" enhanced gcc and g++. It now makes use of [memfd_create.c](memfd_create.c) as well. From git diff, these are the main steps for compiling into memory file and executing that. Finally memfd_create.c process gets terminated, because memory file should be freed. "${mfa[2]}" is pid extracted from memory file name ("/proc/**1808**/fd/3" in last example):
+```
+...
++# read memory file name
++read -r mf < <($mfc &)
++
++# compile $src, store executable in memory file ...
++"/usr/bin/$cmp" $opts -o $mf -x $lng <(shebang < "$src")
++
++# ... and execute it with args
++$mf "$@"
++
++# terminate memfd_create.c in order to close memory file
++IFS="/"
++read -ra mfa <<< "$mf"
++kill "${mfa[2]}"
+```

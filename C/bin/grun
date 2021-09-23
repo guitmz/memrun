@@ -1,8 +1,8 @@
 #!/usr/bin/bash
 
-# if needed, compile memrun.c
-mr=$(dirname "$0")/../memrun
-if [[ $mr.c -nt $mr ]]; then /usr/bin/gcc "$mr.c" -o "$mr"; fi
+# if needed, compile memfd_create.c
+mfc=$(dirname "$0")/../memfd_create
+if [[ $mfc.c -nt $mfc ]]; then /usr/bin/gcc "$mfc.c" -o "$mfc"; fi
 
 # check for "-run" arg
 args=($*)
@@ -17,7 +17,7 @@ if [[ $i -ge $# ]]; then "/usr/bin/$cmp" "$@"; exit; fi
 
 # determine language, options for real compiler and src language
 if [[ "$cmp" == "gcc" ]]; then lng=c; else lng=c++; fi
-opts=${args[@]:0:$i}
+opts=${args[*]:0:$i}
 shift $((i+1))
 src=$1
 shift
@@ -35,5 +35,16 @@ function shebang() {
   done
 }
 
-# compile $src to RAM, and then execute from there, with args
-$mr <("/usr/bin/$cmp" $opts -o /dev/fd/1 -x $lng <(shebang < "$src")) "$@"
+# read memory file name
+read -r mf < <($mfc &)
+
+# compile $src, store executable in memory file ...
+"/usr/bin/$cmp" $opts -o $mf -x $lng <(shebang < "$src")
+
+# ... and execute it with args
+$mf "$@"
+
+# terminate memfd_create.c in order to close memory file
+IFS="/"
+read -ra mfa <<< "$mf"
+kill "${mfa[2]}"
