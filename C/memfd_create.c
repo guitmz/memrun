@@ -10,14 +10,13 @@ int main(void)
   // create memory file
   int mfd = memfd_create("rab.oof", MFD_CLOEXEC);
 
-  // return proc access name
-  char buf[100];
-  sprintf(buf, "/proc/%d/fd/%d", getpid(), mfd);
-  puts(buf);
-  fflush(stdout);
+  // child waits for signal, keeps memory file alive
+  int pid;
+  if (!(pid = fork()))  { pause(); }
 
-  // keep memory file active, until killed
-  for(;;)  { sleep(3600); }
+  // return pid and mfd
+  printf("%d %d\n", pid, mfd);
+  fflush(stdout);
 
   return 0;
 }

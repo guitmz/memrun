@@ -3,9 +3,10 @@
 # demo use of memory file (that lives in RAM), created with memfd_create.c
 
 # read memory file name
-read -r mf < <(./memfd_create &)
+read -r pid mfd < <(./memfd_create &)
 
 # show name
+mf=/proc/$pid/fd/$mfd
 echo "$mf"
 
 # fill memory file
@@ -16,8 +17,7 @@ echo bar >> "$mf"
 cat "$mf"
 
 # terminate memfd_create.c by its pid, in order to close memory file
-IFS="/"  read -ra mfa <<< "$mf"
-kill "${mfa[2]}"
+kill "$pid"
 
 # memory file does not exist anymore after memfd_create.c ended
-IFS=""  cat "$mf"
+cat "$mf"

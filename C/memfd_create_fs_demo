@@ -1,29 +1,29 @@
 #!/usr/bin/bash
 
 # read memory file name
-read -r mf < <(./memfd_create &)
+read -r pid mfd < <(./memfd_create &)
 
 # create 10MB ext2 filesystem in memory file
-dd if=/dev/zero of=$mf bs=1024 count=10240 2> /dev/null
-mkfs.ext2 $mf 2>&1 | cat > /dev/null 
+mnt=/proc/$pid/fd
+mf=$mnt/$mfd
+dd if=/dev/zero of="$mf" bs=1024 count=10240 2> /dev/null
+mkfs.ext2 "$mf" 2>&1 | cat > /dev/null 
 
-IFS="/"  read -ra mfa <<< "$mf"
-
-mnt=/proc/${mfa[2]}/fd
-sudo mount $mf $mnt
-sudo chown pi. $mnt
+# mount that filesystem, and switch ownership to pi user
+sudo mount "$mf" "$mnt"
+sudo chown pi. "$mnt"
 
 # show name of mounted filesystem
-echo $mnt
+echo "$mnt"
 
 # create new file
-echo "foo" > $mnt/bar
+echo "foo" > "$mnt/bar"
 
 # show directory
-ls -l $mnt
+ls -l "$mnt"
 
 # show created file
-cat $mnt/bar
+cat "$mnt/bar"
 
 # terminate memfd_create.c by its pid, in order to close memory file
-kill "${mfa[2]}"
+kill "$pid"

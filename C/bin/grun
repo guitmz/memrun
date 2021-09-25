@@ -36,15 +36,23 @@ function shebang() {
 }
 
 # read memory file name
-read -r mf < <($mfc &)
+read -r pid mfd < <($mfc &)
+mnt="/proc/$pid/fd"
+mf="$mnt/$mfd"
+
+# create 10MB filesystem into memory file
+dd if=/dev/zero of="$mf" bs=1024 count=10240 2> /dev/null
+mkfs.ext2 "$mf" 2>&1 | cat > /dev/null 
+
+# mount that filesystem, and switch ownership to pi user
+sudo mount "$mf" "$mnt"
+sudo chown pi. "$mnt"
 
 # compile $src, store executable in memory file ...
-"/usr/bin/$cmp" $opts -o $mf -x $lng <(shebang < "$src")
+TMPDIR="$mnt" "/usr/bin/$cmp" $opts -o $mnt/doit -x $lng <(shebang < "$src")
 
 # ... and execute it with args
-$mf "$@"
+"$mnt/doit" "$@"
 
 # terminate memfd_create.c in order to close memory file
-IFS="/"
-read -ra mfa <<< "$mf"
-kill "${mfa[2]}"
+kill "$pid"
