@@ -36,7 +36,7 @@ function shebang() {
 }
 
 # read memory file name
-read -r pid mfd < <($mfc &)
+read -r pid mfd < <($mfc)
 mnt="/proc/$pid/fd"
 mf="$mnt/$mfd"
 
