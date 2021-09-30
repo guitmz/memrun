@@ -268,34 +268,7 @@ While memrun.c is fine, it does three things:
 
 2 and 3 can be done in bash or on command line. New [memfd_create.c](memfd_create.c) just exposes memfd_create system call for use with bash. After creating memory file, it creates the proc name for accessing the memory file and prints it to the calling process. That way bash script gets name for using the memory file. Memory file lives as long as memfd_create is running (it sleeps while waiting to be terminated). Bash script needs to extract pid from file name and just kill that pid, then memory file will not be accessible anymore.
 
-Example script memfd_create4bash demonstrates all that:
-```
-#!/usr/bin/bash
-#
-# demo use of memory file (that lives in RAM), created with memfd_create.c
-
-# read memory file name
-read -r mf < <(./memfd_create &)
-
-# show name
-echo "$mf"
-
-# fill memory file
-echo foo > "$mf"
-echo bar >> "$mf"
-
-# output memory file
-cat "$mf"
-
-# terminate memfd_create.c by its pid, in order to close memory file
-IFS="/"  read -ra mfa <<< "$mf"
-kill "${mfa[2]}"
-
-# memory file does not exist anymore after memfd_create.c ended
-IFS=""  cat "$mf"
-```
-
-This is demo output:
+Example script [memfd_create4bash](memfd_create4bash) demonstrates all that; this is demo output:
 ```
 pi@raspberrypi400:~/memrun/C $ ./memfd_create4bash 
 /proc/1808/fd/3
