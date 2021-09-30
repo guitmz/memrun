@@ -322,3 +322,39 @@ pi@raspberrypi400:~/memrun/C $
 +read -ra mfa <<< "$mf"
 +kill "${mfa[2]}"
 ```
+
+## Now "-run" enabled gcc and g++ run completely from RAM
+
+gcc/g++ creates some temporary files during compilation, that by default end up in "/tmp", which is not even a tmpfs under Raspberry Pi 32bit OS. For details see [this posting and following](https://www.raspberrypi.org/forums/viewtopic.php?f=31&t=320170&p=1918904#p1917142).
+
+In order to run completely from RAM, a directory in RAM is needed for temporary files.  With [this commit](https://github.com/Hermann-SW/memrun/commit/5a2444ed5a82e562a8511f6a8a4201c5089dddf1) "/bin/grun" (bin/gcc and bin/g++ link to that file) does
+
+- create memory file
+- create filesyystem in memory file
+- mount that filesystem (under "/proc/PID/fd")
+- create executable "doit" in that filesystem, inclusive all temporary files
+- execute "doit"
+- release memory file&filesystem
+
+So now "-run" enabled gcc/g++ runs completely in RAM!
+
+```
+pi@raspberrypi400:~/memrun/C $ fortune -s | bin/g++ -run demo.cpp foo 123
+bar foo
+Sorry.  I forget what I was going to say.
+pi@raspberrypi400:~/memrun/C $ 
+pi@raspberrypi400:~/memrun/C $ cat demo.cpp 
+/**
+*/
+#include <iostream>
+
+int main(int argc, char *argv[])
+{
+  printf("bar %s\n", argc>1 ? argv[1] : "(undef)");
+
+  for(char c; std::cin.read(&c, 1); )  { std::cout << c; }
+
+  return 0;
+}
+pi@raspberrypi400:~/memrun/C $
+```
