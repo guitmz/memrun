@@ -305,23 +305,6 @@ cat: /proc/1808/fd/3: No such file or directory
 pi@raspberrypi400:~/memrun/C $ 
 ```
 
-[bin/grun](bin/grun) is used by "-run" enhanced gcc and g++. It now makes use of [memfd_create.c](memfd_create.c) as well. From git diff, these are the main steps for compiling into memory file and executing that. Finally memfd_create.c process gets terminated, because memory file should be freed. "${mfa[2]}" is pid extracted from memory file name ("/proc/**1808**/fd/3" in last example):
-```
-...
-+# read memory file name
-+read -r mf < <($mfc &)
-+
-+# compile $src, store executable in memory file ...
-+"/usr/bin/$cmp" $opts -o $mf -x $lng <(shebang < "$src")
-+
-+# ... and execute it with args
-+$mf "$@"
-+
-+# terminate memfd_create.c in order to close memory file
-+IFS="/"
-+read -ra mfa <<< "$mf"
-+kill "${mfa[2]}"
-```
 
 ## Now "-run" enabled gcc and g++ run completely from RAM
 
@@ -336,7 +319,7 @@ In order to run completely from RAM, a directory in RAM is needed for temporary 
 - execute "doit"
 - release memory file&filesystem
 
-So now "-run" enabled gcc/g++ runs completely in RAM!
+So now "-run" enabled gcc/g++ runs completely from RAM!
 
 ```
 pi@raspberrypi400:~/memrun/C $ fortune -s | bin/g++ -run demo.cpp foo 123
