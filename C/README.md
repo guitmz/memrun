@@ -305,6 +305,16 @@ cat: /proc/1808/fd/3: No such file or directory
 pi@raspberrypi400:~/memrun/C $ 
 ```
 
+[memfd_create_fs_demo](memfd_create_fs_demo) demonstrates creation of filesystem in created memory file, and mounting that under "/proc/PID/fd" for process ID PID. No access the real filesystem is needed:
+```
+pi@raspberrypi400:~/memrun/C $ ./memfd_create_fs_demo 
+/proc/13674/fd
+total 13
+-rw-r--r-- 1 pi   pi       4 Sep 30 12:22 bar
+drwx------ 2 root root 12288 Sep 30 12:22 lost+found
+foo
+pi@raspberrypi400:~/memrun/C $ 
+```
 
 ## Now "-run" enabled gcc and g++ run completely from RAM
 
