@@ -278,7 +278,7 @@ cat: /proc/1808/fd/3: No such file or directory
 pi@raspberrypi400:~/memrun/C $ 
 ```
 
-[memfd_create_fs_demo](memfd_create_fs_demo) demonstrates creation of filesystem in created memory file, and mounting that under "/proc/PID/fd" for process ID PID. No access the real filesystem is needed:
+[memfd_create_fs_demo](memfd_create_fs_demo) demonstrates creation of filesystem in created memory file, and mounting that under "/proc/PID/fd" for process ID "PID". No access to real filesystem is needed:
 ```
 pi@raspberrypi400:~/memrun/C $ ./memfd_create_fs_demo 
 /proc/13674/fd
