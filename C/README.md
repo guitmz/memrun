@@ -4,7 +4,7 @@ Small tool written in C to run ELF binaries (verified on x86_64 and armv7l), eit
 
 # Usage
 
-Build it with `$ gcc memrun.c -o memrun`. Allows to run C source compiled with gcc passed via pipe to memrun without temporary filesystem files ("tcc -run" equivalent). Anonymous file created and executed lives in RAM, without link in filesystem. If you are not interested in [memrun.c](memrun.c) details, you can skip discussion wrt [info.c](info.c), and continue with [C script](#C-script) discussion.
+Prepare with executing `runme` once. Allows to run C source compiled with gcc passed via pipe to memrun without temporary filesystem files ("tcc -run" equivalent). Anonymous file created and executed lives in RAM, without link in filesystem. If you are not interested in [memrun.c](memrun.c) details, you can skip discussion wrt [info.c](info.c), and continue with [C script](#C-script) discussion.
 
 Here gcc compiled ELF output gets stored in stdout (file descriptor 1), and piped to memrun that executes it:
 ```
