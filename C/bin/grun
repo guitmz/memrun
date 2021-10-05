@@ -1,7 +1,8 @@
 #!/usr/bin/bash
 
 # if needed, compile memfd_create.c
-mfc=$(dirname "$0")/../memfd_create
+dn=$(dirname "$0")
+mfc="$dn"/../memfd_create
 if [[ $mfc.c -nt $mfc ]]; then /usr/bin/gcc "$mfc.c" -o "$mfc"; fi
 
 # check for "-run" arg
@@ -41,15 +42,16 @@ mnt="/proc/$pid/fd"
 mf="$mnt/$mfd"
 
 # create 10MB filesystem into memory file
-dd if=/dev/zero of="$mf" bs=1024 count=10240 2> /dev/null
-mkfs.ext2 "$mf" 2>&1 | cat > /dev/null 
+#dd if=/dev/zero of="$mf" bs=1024 count=10240 2> /dev/null
+#mkfs.ext2 "$mf" 2>&1 | cat > /dev/null 
+gzip -dc "$dn"/10MB.fs.gz > "$mf"
 
 # mount that filesystem, and switch ownership to pi user
 sudo mount "$mf" "$mnt"
-sudo chown `whoami`. "$mnt"
+sudo chown "$(whoami)". "$mnt"
 
 # compile $src, store executable in memory file ...
-TMPDIR="$mnt" "/usr/bin/$cmp" $opts -o $mnt/doit -x $lng <(shebang < "$src")
+TMPDIR="$mnt" "/usr/bin/$cmp" $opts -o "$mnt"/doit -x $lng <(shebang < "$src")
 
 # ... and execute it with args
 "$mnt/doit" "$@"
