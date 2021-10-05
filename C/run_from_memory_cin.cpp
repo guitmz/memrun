@@ -1,7 +1,8 @@
 #!/bin/bash
 
 echo "foo"
-./memrun <(g++ -o /dev/fd/1 -x c++ <(sed -n "/^\/\*\*$/,\$p" $0)) 42
+#./memrun <(g++ -o /dev/fd/1 -x c++ <(sed -n "/^\/\*\*$/,\$p" $0)) 42
+bin/g++ -run <(sed -n "/^\/\*\*$/,\$p" $0) 42
 
 exit
 /**
