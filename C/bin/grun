@@ -46,7 +46,7 @@ mkfs.ext2 "$mf" 2>&1 | cat > /dev/null
 
 # mount that filesystem, and switch ownership to pi user
 sudo mount "$mf" "$mnt"
-sudo chown pi. "$mnt"
+sudo chown `whoami`. "$mnt"
 
 # compile $src, store executable in memory file ...
 TMPDIR="$mnt" "/usr/bin/$cmp" $opts -o $mnt/doit -x $lng <(shebang < "$src")
