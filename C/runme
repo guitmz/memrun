@@ -1,5 +1,6 @@
 #!/bin/bash
-if [ ! -d /home/pi ]; then sudo ln -s $HOME /home/pi; fi
-
 gcc memrun.c -o memrun
 gcc memfd_create.c -o memfd_create
+
+# needed for fixed shebang string processing in HelloWorld(.c|.cpp)
+if [ ! -d /home/pi ]; then sudo ln -s $HOME /home/pi; fi
